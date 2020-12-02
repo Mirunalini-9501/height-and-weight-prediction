@@ -3,39 +3,37 @@ import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
-from sklearn.metrics import r2_score
+from sklearn.model_selection import train_test_split
 
 #PRINTING THE CONTENTS OF THE DATASET
 data = pd.read_csv("/content/height-weight-prediction-dataset.csv")
-
 data =data.drop("Index",axis =1)
 
-#RESHAPING HEIGHT AND WEIGHT VALUES
-x = data['Height(Inches)']
-x = x.values.reshape(len(x),1)
+#IMPLEMENTING THE DATASET
+X = data.iloc[:, 1].values  #prints only the height values
+y = data.iloc[:, 2].values #prints weight values
 
-y = data['Weight(Pounds)']
-y = y.values.reshape(-1,1)
+#SPLITTING THE DATASET
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size= 0.2, random_state=0)
+
+
+#RESHAPING
+X_train= X_train.reshape(-1, 1)
+y_train= y_train.reshape(-1, 1)
+X_test = X_test.reshape(-1, 1)
+y_test = y_test.reshape(-1, 1)
 
 #IMPLEMENTING LINEAR REGRESSION 
-model = LinearRegression().fit(x,y)
-r_sq = model.score(x, y)
+model = LinearRegression().fit(X_train,y_train)
+lin_pred = lin_reg.predict(X_test)
 
-#PRINTING THE SLOPE AND INTERCEPT VALUES
-model.fit(x,y)
-print('intercept:', model.intercept_)
-print('slope:',model.coef_)
-
-#PREDICTION OF HEIGHT
-data["predicted value"] = model.predict(x)
-
-#ACCURACY OF PREDICTION
-accuracy=r2_score(y,model.predict(x))
-print("the model accuracy is",accuracy*100,"%")
+#CALCULATING THE ACCURACY
+m = model.score(X_train,y_train)
+print("Accuracy is:{}%".format(m*100))
 
 #PLOTTING THE DATASET VALUES IN GRAPH 
-plt.scatter(x,y,color = "black")
-plt.plot(x,model.predict(x),color="blue")
+plt.scatter(X_train,y_train,color = "red")
+plt.plot(X_train,model.predict(X_train),color="blue")
 plt.title("Height-Weight Prediction")
 plt.xlabel("Height(Inches)")
 plt.ylabel("Weight(Pounds)")
